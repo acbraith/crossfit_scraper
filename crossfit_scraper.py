@@ -1,9 +1,9 @@
 from bs4 import BeautifulSoup
 import pandas as pd
 import numpy as np
-import requests, re, pprint, json, time, random, fancyimpute, sys, os, itertools
+import requests, re, json, time, random, sys, os, itertools
 from multiprocessing.pool import ThreadPool
-from multiprocessing import Pool, Manager
+from multiprocessing import Pool
 from memoize import persistent_memoize
 
 
