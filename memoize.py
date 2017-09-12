@@ -1,5 +1,5 @@
 from collections import MutableMapping
-import sqlite3, pickle, os, functools, GPflow, inspect
+import sqlite3, pickle, os, functools, inspect
 
 
 class PersistentDict(MutableMapping):
@@ -99,14 +99,6 @@ def json_serial(obj):
     elif isinstance(obj, timedelta):
         serial = str(obj)
         return serial
-    elif isinstance(obj, GPflow.gpr.GPR):
-        d = {'__class__':obj.__class__.__name__, 
-            '__module__':obj.__module__,
-            'kern': str(obj.__dict__['kern']),
-            'mean_function': str(obj.__dict__['mean_function']),
-            'X': str(obj.__dict__['X']),
-            'Y': str(obj.__dict__['Y'])}
-        return d
     elif isinstance(obj, np.ndarray):
         return obj.tolist()
     elif isinstance(obj, np.int64):
