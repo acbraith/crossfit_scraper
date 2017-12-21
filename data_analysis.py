@@ -1,4 +1,4 @@
-from crossfit_scraper import get_analysis_dataframe
+from crossfit_api import get_analysis_dataframe
 import numpy as np
 import pandas as pd
 from memoize import persistent_memoize, memoize
