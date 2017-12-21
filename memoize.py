@@ -1,5 +1,5 @@
 from collections import MutableMapping
-import sqlite3, pickle, os, functools, inspect
+import sqlite3, pickle, os, functools, GPflow, inspect
 
 
 class PersistentDict(MutableMapping):
@@ -99,6 +99,14 @@ def json_serial(obj):
     elif isinstance(obj, timedelta):
         serial = str(obj)
         return serial
+    elif isinstance(obj, GPflow.gpr.GPR):
+        d = {'__class__':obj.__class__.__name__, 
+            '__module__':obj.__module__,
+            'kern': str(obj.__dict__['kern']),
+            'mean_function': str(obj.__dict__['mean_function']),
+            'X': str(obj.__dict__['X']),
+            'Y': str(obj.__dict__['Y'])}
+        return d
     elif isinstance(obj, np.ndarray):
         return obj.tolist()
     elif isinstance(obj, np.int64):
@@ -117,6 +125,24 @@ def persistent_memoize(file_name):
     https://stackoverflow.com/questions/16463582/memoize-to-disk-python-persistent-memoization
     '''
     cache = PersistentDict(file_name)
+
+    def decorator(func):
+        def new_func(*args, **kwargs):
+            key = (json.dumps(args, sort_keys=True, default=json_serial), 
+                json.dumps(kwargs, sort_keys=True, default=json_serial))
+            if key not in cache:
+                cache[key] = func(*args, **kwargs)
+            return cache[key]
+        return new_func
+
+    return decorator
+
+def memoize():
+    '''
+    Based on 
+    https://stackoverflow.com/questions/16463582/memoize-to-disk-python-persistent-memoization
+    '''
+    cache = {}
 
     def decorator(func):
         def new_func(*args, **kwargs):
