@@ -1,9 +1,9 @@
 from bs4 import BeautifulSoup
 import pandas as pd
 import numpy as np
-import requests, re, json, time, random, sys, os, itertools
+import requests, re, pprint, json, time, random, fancyimpute, sys, os, itertools
 from multiprocessing.pool import ThreadPool
-from multiprocessing import Pool
+from multiprocessing import Pool, Manager
 from memoize import persistent_memoize
 
 
@@ -287,7 +287,7 @@ def _get_analysis_dataframe(*args, **kwargs):
 	'''
 	leaderboard_df = populate_leaderboard_with_stats(*args, **kwargs)
 
-	cols = ['overallrank','overallscore',
+	cols = ['userid', 'overallrank','overallscore',
 		'Age','Height','Weight',
 		'Back Squat','Clean and Jerk','Snatch',
 		'Deadlift','Fight Gone Bad','Max Pull-ups',
@@ -312,7 +312,7 @@ def _get_analysis_dataframe(*args, **kwargs):
 			raise e
 		new_row = pd.Series(
 			[
-				row.overallrank, row.overallscore,
+				row.userid, row.overallrank, row.overallscore,
 				athlete_stats['Age'],athlete_stats['Height'],athlete_stats['Weight'],
 				athlete_stats['Back Squat'],athlete_stats['Clean and Jerk'],athlete_stats['Snatch'],
 				athlete_stats['Deadlift'],athlete_stats['Fight Gone Bad'],athlete_stats['Max Pull-ups'],
